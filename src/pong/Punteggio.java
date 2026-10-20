@@ -1,65 +1,3 @@
-package pong;
-
-import java.util.ArrayList;
-import java.util.List;
-
-public class Punteggio {
-    private final int puntiPerVincere;
-    private final int scartoMinimo;
-    private final List<Lato> storia = new ArrayList<>();
-
-    public Punteggio(int puntiPerVincere, int scartoMinimo) {
-        this.puntiPerVincere = puntiPerVincere;
-        this.scartoMinimo = scartoMinimo;
-    }
-
-    public void punto(Lato lato) {
-        if (!finito()) {
-            storia.add(lato);
-        }
-    }
-
-    public void annullaUltimoPunto() {
-        if (!storia.isEmpty()) {
-            storia.remove(storia.size() - 1);
-        }
-    }
-
-    public int getPunti(Lato lato) {
-        int p = 0;
-        for (Lato l : storia) {
-            if (l == lato) {
-                p++;
-            }
-        }
-        return p;
-    }
-
-    public boolean finito() {
-        int sin = getPunti(Lato.SINISTRA);
-        int des = getPunti(Lato.DESTRA);
-
-        int max = Math.max(sin, des);
-        int scarto = Math.abs(sin - des);
-
-        return max >= puntiPerVincere && scarto >= scartoMinimo;
-    }
-
-    public Lato getVincitore() {
-        if (!finito()) {
-            return null;
-        }
-        return getPunti(Lato.SINISTRA) > getPunti(Lato.DESTRA) ? Lato.SINISTRA : Lato.DESTRA;
-    }
-
-    public List<Lato> getStoria() {
-        return List.copyOf(storia);
-    }
-
-    public void azzera() {
-        storia.clear();
-    }
-}
 // Pong — Programmazione Orientata agli Oggetti e Laboratori, Udine, a.a. 2026-27
 // Consegna 1: il Punteggio. Scadenza: domenica 25 ottobre 2026.
 package pong;
@@ -81,7 +19,9 @@ import java.util.List;
  */
 public class Punteggio {
 
-    // scrivete qui i campi che vi servono
+    private final int puntiPerVincere;
+    private final int scartoMinimo;
+    private final List<Lato> storia = new ArrayList<>();
 
     /**
      * Una partita nuova, 0 a 0, con la sua regola per vincere.
@@ -89,7 +29,8 @@ public class Punteggio {
      * Promette: una partita 0 a 0, non finita, senza vincitore e con la storia vuota.
      */
     public Punteggio(int puntiPerVincere, int scartoMinimo) {
-        // scrivete qui
+        this.puntiPerVincere = puntiPerVincere;
+        this.scartoMinimo = scartoMinimo;
     }
 
     /**
@@ -101,7 +42,12 @@ public class Punteggio {
      *           Se la partita era già finita, non cambia niente.
      */
     public void segnaPunto(Lato chi) {
-        // scrivete qui
+        if (chi == null) {
+            throw new IllegalArgumentException("Il lato non può essere null");
+        }
+        if (!isFinita()) {
+            storia.add(chi);
+        }
     }
 
     /**
@@ -109,21 +55,39 @@ public class Punteggio {
      * Promette: i punti del lato chi. Non cambia niente.
      */
     public int getPunti(Lato chi) {
-        return 0; // scrivete qui
+        if (chi == null) {
+            throw new IllegalArgumentException("Il lato non può essere null");
+        }
+        int count = 0;
+        for (Lato l : storia) {
+            if (l == chi) {
+                count++;
+            }
+        }
+        return count;
     }
 
     /**
      * Promette: vero se la partita è finita, cioè se un lato ha vinto. Non cambia niente.
      */
     public boolean isFinita() {
-        return false; // scrivete qui
+        int pSinistra = getPunti(Lato.SINISTRA);
+        int pDestra = getPunti(Lato.DESTRA);
+
+        int max = Math.max(pSinistra, pDestra);
+        int scarto = Math.abs(pSinistra - pDestra);
+
+        return max >= puntiPerVincere && scarto >= scartoMinimo;
     }
 
     /**
      * Promette: il lato che ha vinto; null se la partita non è finita. Non cambia niente.
      */
     public Lato getVincitore() {
-        return null; // scrivete qui
+        if (!isFinita()) {
+            return null;
+        }
+        return getPunti(Lato.SINISTRA) > getPunti(Lato.DESTRA) ? Lato.SINISTRA : Lato.DESTRA;
     }
 
     /**
@@ -135,7 +99,9 @@ public class Punteggio {
      *           niente.
      */
     public void annullaUltimoPunto() {
-        // scrivete qui
+        if (!storia.isEmpty()) {
+            storia.remove(storia.size() - 1);
+        }
     }
 
     /**
@@ -149,7 +115,7 @@ public class Punteggio {
      *           segnati dopo; chi la usa non deve contare né sull'una né sull'altra cosa.
      */
     public List<Lato> getStoria() {
-        return new ArrayList<>(); // scrivete qui
+        return List.copyOf(storia);
     }
 
     /**
@@ -158,6 +124,6 @@ public class Punteggio {
      * Promette: 0 a 0, non finita, senza vincitore, storia vuota; la regola per vincere non cambia.
      */
     public void azzera() {
-        // scrivete qui
+        storia.clear();
     }
 }
