@@ -1,3 +1,65 @@
+package pong;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Punteggio {
+    private final int puntiPerVincere;
+    private final int scartoMinimo;
+    private final List<Lato> storia = new ArrayList<>();
+
+    public Punteggio(int puntiPerVincere, int scartoMinimo) {
+        this.puntiPerVincere = puntiPerVincere;
+        this.scartoMinimo = scartoMinimo;
+    }
+
+    public void punto(Lato lato) {
+        if (!finito()) {
+            storia.add(lato);
+        }
+    }
+
+    public void annullaUltimoPunto() {
+        if (!storia.isEmpty()) {
+            storia.remove(storia.size() - 1);
+        }
+    }
+
+    public int getPunti(Lato lato) {
+        int p = 0;
+        for (Lato l : storia) {
+            if (l == lato) {
+                p++;
+            }
+        }
+        return p;
+    }
+
+    public boolean finito() {
+        int sin = getPunti(Lato.SINISTRA);
+        int des = getPunti(Lato.DESTRA);
+
+        int max = Math.max(sin, des);
+        int scarto = Math.abs(sin - des);
+
+        return max >= puntiPerVincere && scarto >= scartoMinimo;
+    }
+
+    public Lato getVincitore() {
+        if (!finito()) {
+            return null;
+        }
+        return getPunti(Lato.SINISTRA) > getPunti(Lato.DESTRA) ? Lato.SINISTRA : Lato.DESTRA;
+    }
+
+    public List<Lato> getStoria() {
+        return List.copyOf(storia);
+    }
+
+    public void azzera() {
+        storia.clear();
+    }
+}
 // Pong — Programmazione Orientata agli Oggetti e Laboratori, Udine, a.a. 2026-27
 // Consegna 1: il Punteggio. Scadenza: domenica 25 ottobre 2026.
 package pong;
